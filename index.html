@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulario de Contacto</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 400px; margin: 50px auto; padding: 20px; }
+        input, textarea { width: 100%; padding: 10px; margin-bottom: 10px; box-sizing: border-box; }
+        button { background: #000; color: #fff; padding: 10px 20px; border: none; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+    <h2>Contáctanos</h2>
+    <form id="contactForm">
+        <input type="text" id="nombre" name="nombre" placeholder="Tu Nombre" required>
+        <input type="email" id="email" name="email" placeholder="Tu Correo" required>
+        <textarea id="mensaje" name="mensaje" placeholder="Tu Mensaje" required></textarea>
+        <button type="submit" id="btnEnviar">Enviar Mensaje</button>
+    </form>
+
+    <p id="estado" style="margin-top: 15px; font-weight: bold;"></p>
+
+    <script>
+        document.getElementById('contactForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('btnEnviar');
+            const estado = document.getElementById('estado');
+            
+            btn.textContent = 'Enviando...';
+            btn.disabled = true;
+
+            const datos = {
+                nombre: document.getElementById('nombre').value,
+                email: document.getElementById('email').value,
+                mensaje: document.getElementById('mensaje').value
+            };
+
+            try {
+                const res = await fetch('/api/enviar', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(datos)
+                });
+
+                if (res.ok) {
+                    estado.style.color = 'green';
+                    estado.textContent = '¡Mensaje enviado con éxito!';
+                    document.getElementById('contactForm').reset();
+                } else {
+                    throw new Error('Error en el servidor');
+                }
+            } catch (error) {
+                estado.style.color = 'red';
+                estado.textContent = 'Hubo un error al enviar el mensaje.';
+            } finally {
+                btn.textContent = 'Enviar Mensaje';
+                btn.disabled = false;
+            }
+        });
+    </script>
+</body>
+</html>
