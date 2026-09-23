@@ -12,7 +12,7 @@ export default async function handler(req, res) {
   try {
     const data = await resend.emails.send({
       from: 'Formulario Web <onboarding@resend.dev>',
-      to: ['TU_CORREO_PERSONAL@gmail.com'], // <-- CAMBIA ESTO POR TU CORREO REAL
+      to: ['ggtecnologiaventas@gmail.com'], // <-- CAMBIA ESTO POR TU CORREO REAL
       subject: `Nuevo mensaje de contacto de ${nombre}`,
       html: `
         <h2>Has recibido un nuevo mensaje desde tu web:</h2>
