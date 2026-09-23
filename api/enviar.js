@@ -1,24 +1,26 @@
-import { Resend } from 'resend';
+const { Resend } = require('resend');
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-export default async function handler(req, res) {
+module.exports = async (req, res) => {
   if (req.method !== 'POST') {
-    return res.status(405.json({ error: 'Método no permitido' }));
+    return res.status(405).json({ error: 'Método no permitido' });
   }
 
-  const { nombre, email, mensaje } = req.body;
+  // Recibimos los datos del formulario de cotización
+  const { nombre, email, producto, mensaje } = req.body;
 
   try {
     const data = await resend.emails.send({
-      from: 'Formulario Web <onboarding@resend.dev>',
-      to: ['ggtecnologiaventas@gmail.com'], // <-- CAMBIA ESTO POR TU CORREO REAL
-      subject: `Nuevo mensaje de contacto de ${nombre}`,
+      from: 'Sistema de Cotizaciones <onboarding@resend.dev>',
+      to: ['ggtecnologiaventas@gmail.com'],
+      subject: `Nueva Solicitud de Cotización de ${nombre}`,
       html: `
-        <h2>Has recibido un nuevo mensaje desde tu web:</h2>
-        <p><strong>Nombre:</strong> ${nombre}</p>
-        <p><strong>Correo:</strong> ${email}</p>
-        <p><strong>Mensaje:</strong></p>
+        <h2>¡Has recibido una nueva solicitud de cotización!</h2>
+        <p><strong>Cliente:</strong> ${nombre}</p>
+        <p><strong>Correo de contacto:</strong> ${email}</p>
+        <p><strong>Producto/Servicio de interés:</strong> ${producto}</p>
+        <p><strong>Detalles o Mensaje:</strong></p>
         <p>${mensaje}</p>
       `,
     });
@@ -27,4 +29,4 @@ export default async function handler(req, res) {
   } catch (error) {
     return res.status(500).json({ error: error.message });
   }
-}
+};
