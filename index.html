@@ -1,15 +1,105 @@
-<form id="formCotizacion">
-    <h3>Solicitar Cotización</h3>
-    <input type="text" id="nombre" name="nombre" placeholder="Tu Nombre o Empresa" required>
-    <input type="email" id="email" name="email" placeholder="Tu Correo Electrónico" required>
-    <input type="text" id="producto" name="producto" placeholder="Producto o Servicio a cotizar" required>
-    <textarea id="mensaje" name="mensaje" placeholder="Detalles de la cotización..." required></textarea>
-    <button type="submit" id="btnCotizar">Enviar Cotización</button>
-</form>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GG TEC - Cotización para Distribuidores</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #121212; color: #fff; padding: 20px; }
+        .container { max-width: 800px; margin: auto; background: #1e1e1e; padding: 30px; border-radius: 10px; }
+        .product-row { display: flex; justify-content: space-between; align-items: center; background: #2a2a2a; padding: 15px; margin-bottom: 10px; border-radius: 8px; }
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px; }
+        input, textarea { width: 100%; padding: 10px; background: #333; border: 1px solid #444; color: #fff; border-radius: 5px; box-sizing: border-box; }
+        textarea { grid-column: span 2; }
+        button { background: #00ff66; color: #000; border: none; padding: 15px; font-weight: bold; width: 100%; border-radius: 5px; cursor: pointer; margin-top: 20px; font-size: 16px; }
+        button:hover { background: #00cc52; }
+    </style>
+</head>
+<body>
 
-<p id="estadoCotizacion" style="margin-top: 15px; font-weight: bold;"></p>
+<div class="container">
+    <h2>Cotización para Distribuidores</h2>
+    <p>Selecciona los productos y cantidades que deseas comercializar en tu negocio:</p>
+
+    <form id="formCotizacion">
+        <!-- Productos -->
+        <div class="product-row">
+            <div>
+                <strong>TV Box Ultra 4K Android TV + GGAPPS TV</strong><br>
+                <small>Ref. Detalle: $49.998</small>
+            </div>
+            <input type="number" name="tvbox" min="0" value="0" style="width: 80px;" onchange="calcularTotal()">
+        </div>
+
+        <div class="product-row">
+            <div>
+                <strong>Combo TV Box + Control Remoto Inteligente</strong><br>
+                <small>Ref. Detalle: $59.990</small>
+            </div>
+            <input type="number" name="combo" min="0" value="0" style="width: 80px;" onchange="calcularTotal()">
+        </div>
+
+        <div class="product-row">
+            <div>
+                <strong>PENDRIVE con Apps para Smart TV / Android TV Box</strong><br>
+                <small>Ref. Detalle: $54.990</small>
+            </div>
+            <input type="number" name="pendrive" min="0" value="0" style="width: 80px;" onchange="calcularTotal()">
+        </div>
+
+        <div class="product-row">
+            <div>
+                <strong>Control Remoto Air Mouse con Voz & Teclado QWERTY</strong><br>
+                <small>Ref. Detalle: $14.990</small>
+            </div>
+            <input type="number" name="airmouse" min="0" value="0" style="width: 80px;" onchange="calcularTotal()">
+        </div>
+
+        <div class="product-row">
+            <div>
+                <strong>Hub USB-C 7 en 1 Multifunción 4K HDMI</strong><br>
+                <small>Ref. Detalle: $36.990</small>
+            </div>
+            <input type="number" name="hub" min="0" value="0" style="width: 80px;" onchange="calcularTotal()">
+        </div>
+
+        <div class="product-row">
+            <div>
+                <strong>Cable HDMI 2.1 Ultra High Speed 8K@60Hz</strong><br>
+                <small>Ref. Detalle: $9.990</small>
+            </div>
+            <input type="number" name="cable" min="0" value="0" style="width: 80px;" onchange="calcularTotal()">
+        </div>
+
+        <p><strong>Total de unidades seleccionadas: <span id="totalUnidades">0</span></strong></p>
+
+        <h3 style="margin-top: 30px;">2. Datos de contacto para enviarte la cotización</h3>
+        
+        <div class="form-grid">
+            <input type="text" id="nombre" name="nombre" placeholder="Nombre *" required>
+            <input type="text" id="apellido" name="apellido" placeholder="Apellido *" required>
+            <input type="text" id="ciudad" name="ciudad" placeholder="Ciudad o Comuna *" required>
+            <input type="text" id="telefono" name="telefono" placeholder="Número de Contacto / WhatsApp *" required>
+            <input type="email" id="email" name="email" placeholder="Correo Electrónico (aquí recibirás la cotización) *" style="grid-column: span 2;" required>
+            <textarea id="notas" name="notas" placeholder="Notas adicionales o tipo de negocio (Opcional)"></textarea>
+        </div>
+
+        <button type="submit" id="btnCotizar">Recibir cotización →</button>
+    </form>
+
+    <p id="estadoCotizacion" style="margin-top: 15px; font-weight: bold; text-align: center;"></p>
+</div>
 
 <script>
+function calcularTotal() {
+    const inputs = document.querySelectorAll('.product-row input');
+    let total = 0;
+    inputs.forEach(input => {
+        total += parseInt(input.value) || 0;
+    });
+    document.getElementById('totalUnidades').textContent = total;
+}
+
 document.getElementById('formCotizacion').addEventListener('submit', async (e) => {
     e.preventDefault();
     const btn = document.getElementById('btnCotizar');
@@ -18,12 +108,19 @@ document.getElementById('formCotizacion').addEventListener('submit', async (e) =
     btn.textContent = 'Enviando cotización...';
     btn.disabled = true;
 
-    // Recolectamos los datos de los campos
     const datos = {
+        tvbox: document.querySelector('input[name="tvbox"]').value,
+        combo: document.querySelector('input[name="combo"]').value,
+        pendrive: document.querySelector('input[name="pendrive"]').value,
+        airmouse: document.querySelector('input[name="airmouse"]').value,
+        hub: document.querySelector('input[name="hub"]').value,
+        cable: document.querySelector('input[name="cable"]').value,
         nombre: document.getElementById('nombre').value,
+        apellido: document.getElementById('apellido').value,
+        ciudad: document.getElementById('ciudad').value,
+        telefono: document.getElementById('telefono').value,
         email: document.getElementById('email').value,
-        producto: document.getElementById('producto').value,
-        mensaje: document.getElementById('mensaje').value
+        notas: document.getElementById('notas').value
     };
 
     try {
@@ -34,18 +131,22 @@ document.getElementById('formCotizacion').addEventListener('submit', async (e) =
         });
 
         if (res.ok) {
-            estado.style.color = 'green';
+            estado.style.color = '#00ff66';
             estado.textContent = '¡Cotización enviada con éxito! Te contactaremos pronto.';
             document.getElementById('formCotizacion').reset();
+            calcularTotal();
         } else {
             throw new Error('Error en el servidor');
         }
     } catch (error) {
-        estado.style.color = 'red';
+        estado.style.color = '#ff4444';
         estado.textContent = 'Hubo un error al enviar la cotización. Inténtalo de nuevo.';
     } finally {
-        btn.textContent = 'Enviar Cotización';
+        btn.textContent = 'Recibir cotización →';
         btn.disabled = false;
     }
 });
 </script>
+
+</body>
+</html>
